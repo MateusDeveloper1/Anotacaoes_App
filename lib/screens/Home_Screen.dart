@@ -75,6 +75,32 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _alert(int anotacao) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Deseja apagar?"),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                _removerAnotacao(anotacao);
+                Navigator.pop(context);
+              },
+              child: const Text("Sim", style: TextStyle(color: Color.fromARGB(255, 240, 99, 99)),),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Não", style: TextStyle(color: Colors.green)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   _recuperarAnotacoes() async {
     List anotacoesRecuperadas = await _db.recuperarAnotacoes();
     List<Anotacao> listaTemporaria = <Anotacao>[];
@@ -177,7 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              _removerAnotacao(anotacao.id!);
+                              _alert(anotacao.id!);
+                              //_removerAnotacao(anotacao.id!);
                             },
                             child: const Padding(
                               padding: EdgeInsets.only(right: 0),
