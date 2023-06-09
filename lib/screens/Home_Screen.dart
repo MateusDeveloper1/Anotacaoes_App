@@ -100,7 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
         data: DateTime.now().toString(),
       ); //Salvar
       int resultado = await _db.salvarAnotacao(anotacao);
-    } else { //Atualizar
+    } else {
+      //Atualizar
       anotacaoSelecionada.titulo = titulo;
       anotacaoSelecionada.descricao = descricao;
       anotacaoSelecionada.data = DateTime.now().toString();
@@ -119,6 +120,12 @@ class _HomeScreenState extends State<HomeScreen> {
     DateTime dataConvertida = DateTime.parse(data);
     String dataFormatada = formatador.format(dataConvertida);
     return dataFormatada;
+  }
+
+  _removerAnotacao(int id) async {
+    await _db.removerAnotacao(id);
+
+    _recuperarAnotacoes();
   }
 
   @override
@@ -162,7 +169,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            _removerAnotacao(anotacao.id!);
+                          },
                           child: const Padding(
                             padding: EdgeInsets.only(right: 0),
                             child: Icon(
