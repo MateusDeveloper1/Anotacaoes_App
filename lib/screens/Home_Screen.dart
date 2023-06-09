@@ -138,7 +138,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Minhas Anotações"),
+        title: const Text(
+          "Minhas Anotações",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         backgroundColor: Colors.lightGreen,
       ),
       body: Column(
@@ -148,39 +153,42 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: _anotacoes.length,
               itemBuilder: (context, index) {
                 final anotacao = _anotacoes[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(anotacao.titulo),
-                    subtitle: Text(
-                        "${_formatarData(anotacao.data)} - ${anotacao.descricao}"),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            _exibirCadastro(anotacao: anotacao);
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.only(right: 16),
-                            child: Icon(
-                              Icons.edit,
-                              color: Colors.green,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Card(
+                    child: ListTile(
+                      title: Text(anotacao.titulo),
+                      subtitle: Text(
+                          "${_formatarData(anotacao.data)} - ${anotacao.descricao}"),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              _exibirCadastro(anotacao: anotacao);
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.only(right: 16),
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.green,
+                              ),
                             ),
                           ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            _removerAnotacao(anotacao.id!);
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.only(right: 0),
-                            child: Icon(
-                              Icons.remove_circle,
-                              color: Colors.red,
+                          GestureDetector(
+                            onTap: () {
+                              _removerAnotacao(anotacao.id!);
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.only(right: 0),
+                              child: Icon(
+                                Icons.remove_circle,
+                                color: Colors.red,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -191,6 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
         child: const Icon(Icons.add),
         onPressed: () {
           _exibirCadastro();
