@@ -17,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final _db = AnotacaoHelper();
   List<Anotacao> _anotacoes = <Anotacao>[];
 
-  _exibirCadastro({Anotacao? anotacao}) {
+  void _exibirCadastro({Anotacao? anotacao}) {
     String textoSalvarAtualizar = "";
 
     if (anotacao == null) {
@@ -80,14 +80,22 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Deseja apagar?"),
+          title: const Text(
+            "Deseja apagar?",
+            style: TextStyle(
+              fontSize: 18,
+            ),
+          ),
           actions: [
             ElevatedButton(
               onPressed: () {
                 _removerAnotacao(anotacao);
                 Navigator.pop(context);
               },
-              child: const Text("Sim", style: TextStyle(color: Color.fromARGB(255, 240, 99, 99)),),
+              child: const Text(
+                "Sim",
+                style: TextStyle(color: Color.fromARGB(255, 240, 99, 99)),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -101,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _recuperarAnotacoes() async {
+  void _recuperarAnotacoes() async {
     List anotacoesRecuperadas = await _db.recuperarAnotacoes();
     List<Anotacao> listaTemporaria = <Anotacao>[];
 
@@ -115,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  _salvarAtulizarAnotacao({Anotacao? anotacaoSelecionada}) async {
+  void _salvarAtulizarAnotacao({Anotacao? anotacaoSelecionada}) async {
     String titulo = _tituloController.text;
     String descricao = _descricaoController.text;
 
@@ -139,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _recuperarAnotacoes();
   }
 
-  _formatarData(String data) {
+  String _formatarData(String data) {
     initializeDateFormatting("pt_BR");
 
     var formatador = DateFormat("d/MM/y");
@@ -148,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return dataFormatada;
   }
 
-  _removerAnotacao(int id) async {
+  void _removerAnotacao(int id) async {
     await _db.removerAnotacao(id);
 
     _recuperarAnotacoes();
@@ -161,14 +169,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    _tituloController.dispose();
+    _descricaoController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           "Minhas Anotações",
           style: TextStyle(
-            color: Colors.white,
-          ),
+              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.lightGreen,
       ),
