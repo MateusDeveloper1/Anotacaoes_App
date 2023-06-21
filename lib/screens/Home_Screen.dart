@@ -64,8 +64,12 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                _salvarAtulizarAnotacao(anotacaoSelecionada: anotacao);
-                Navigator.pop(context);
+                if (_descricaoController.text.isEmpty) {
+                  Navigator.pop(context);
+                } else {
+                  _salvarAtulizarAnotacao(anotacaoSelecionada: anotacao);
+                  Navigator.pop(context);
+                }
               },
               child: Text(textoSalvarAtualizar),
             ),
@@ -186,6 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.lightGreen,
+        elevation: 6,
       ),
       body: Column(
         children: [
