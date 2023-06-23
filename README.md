@@ -7,7 +7,9 @@ Este é o repositório do aplicativo de Anotações_App. O aplicativo permite qu
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+<div>
+  <img src = "https://user-images.githubusercontent.com/105679323/248395193-d3a032cc-50cb-4483-93af-7cc455de4917.png", width="200px"/>
+</div>
 
 
 ## Stack utilizada
