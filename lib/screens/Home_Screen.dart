@@ -16,25 +16,27 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _descricaoController = TextEditingController();
   final _db = AnotacaoHelper();
   List<Anotacao> _anotacoes = <Anotacao>[];
+  bool displayNotes = false;
 
-  void _exibirCadastro({Anotacao? anotacao}) {
-    String textoSalvarAtualizar = "";
+  // mostrar anotação
+  void _displayRecord({Anotacao? anotacao}) {
+    String textSaveUpdate = "";
 
     if (anotacao == null) {
       _tituloController.text = "";
       _descricaoController.text = "";
-      textoSalvarAtualizar = "Salvar";
+      textSaveUpdate = "Salvar";
     } else {
-      _tituloController.text = anotacao.titulo;
-      _descricaoController.text = anotacao.descricao;
-      textoSalvarAtualizar = "Atualizar";
+      _tituloController.text = anotacao.title;
+      _descricaoController.text = anotacao.description;
+      textSaveUpdate = "Atualizar";
     }
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("$textoSalvarAtualizar Anotação"),
+          title: Text("$textSaveUpdate Anotação"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -57,21 +59,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             ElevatedButton(
+              child: const Text("Cancelar"),
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text("Cancelar"),
             ),
             ElevatedButton(
+              child: Text(textSaveUpdate),
               onPressed: () {
                 if (_descricaoController.text.isEmpty) {
                   Navigator.pop(context);
                 } else {
-                  _salvarAtulizarAnotacao(anotacaoSelecionada: anotacao);
+                  _saveUpdateAnnotation(anotacaoSelecionada: anotacao);
                   Navigator.pop(context);
                 }
               },
-              child: Text(textoSalvarAtualizar),
             ),
           ],
         );
@@ -79,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  //Alerta o usuario se realmente deseja apagar a anotação
   void _alert(int anotacao) {
     showDialog(
       context: context,
@@ -92,20 +95,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             ElevatedButton(
-              onPressed: () {
-                _removerAnotacao(anotacao);
-                Navigator.pop(context);
-              },
               child: const Text(
                 "Sim",
                 style: TextStyle(color: Color.fromARGB(255, 240, 99, 99)),
               ),
+              onPressed: () {
+                _removeAnnotation(anotacao);
+                Navigator.pop(context);
+              },
             ),
             ElevatedButton(
+              child: const Text("Não", style: TextStyle(color: Colors.green)),
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text("Não", style: TextStyle(color: Colors.green)),
             ),
           ],
         );
@@ -113,8 +116,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _recuperarAnotacoes() async {
-    List anotacoesRecuperadas = await _db.recuperarAnotacoes();
+  // recuperar anotações
+  void _recoverNotes() async {
+    List anotacoesRecuperadas = await _db.retrieveNotes();
     List<Anotacao> listaTemporaria = <Anotacao>[];
 
     for (var item in anotacoesRecuperadas) {
@@ -127,31 +131,32 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _salvarAtulizarAnotacao({Anotacao? anotacaoSelecionada}) async {
+  //salvar anotação atualizada
+  void _saveUpdateAnnotation({Anotacao? anotacaoSelecionada}) async {
     String titulo = _tituloController.text;
     String descricao = _descricaoController.text;
 
     if (anotacaoSelecionada == null) {
       Anotacao anotacao = Anotacao(
-        titulo: titulo,
-        descricao: descricao,
-        data: DateTime.now().toString(),
+        title: titulo,
+        description: descricao,
+        date: DateTime.now().toString(),
       ); //Salvar
-      int resultado = await _db.salvarAnotacao(anotacao);
+      await _db.saveAnnotation(anotacao);
     } else {
       //Atualizar
-      anotacaoSelecionada.titulo = titulo;
-      anotacaoSelecionada.descricao = descricao;
-      anotacaoSelecionada.data = DateTime.now().toString();
-      int resultado = await _db.atualizarAnotacao(anotacaoSelecionada);
+      anotacaoSelecionada.title = titulo;
+      anotacaoSelecionada.description = descricao;
+      anotacaoSelecionada.date = DateTime.now().toString();
+      await _db.updateAnnotation(anotacaoSelecionada);
     }
 
     _tituloController.clear();
     _descricaoController.clear();
-    _recuperarAnotacoes();
+    _recoverNotes();
   }
 
-  String _formatarData(String data) {
+  String _formateDate(String data) {
     initializeDateFormatting("pt_BR");
 
     var formatador = DateFormat("d/MM/y");
@@ -160,16 +165,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return dataFormatada;
   }
 
-  void _removerAnotacao(int id) async {
-    await _db.removerAnotacao(id);
+  //remover anotação
+  void _removeAnnotation(int id) async {
+    await _db.removeAnnotation(id);
 
-    _recuperarAnotacoes();
+    _recoverNotes();
   }
 
   @override
   void initState() {
     super.initState();
-    _recuperarAnotacoes();
+    _recoverNotes();
   }
 
   @override
@@ -203,15 +209,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: Card(
                     child: ListTile(
-                      title: Text(anotacao.titulo),
+                      title: Text(anotacao.title),
                       subtitle: Text(
-                          "${_formatarData(anotacao.data)} - ${anotacao.descricao}"),
+                          "${_formateDate(anotacao.date)} - ${anotacao.description}"),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           GestureDetector(
                             onTap: () {
-                              _exibirCadastro(anotacao: anotacao);
+                              _displayRecord(
+                                  anotacao:
+                                      anotacao); //exibir cadastro de anotações
                             },
                             child: const Padding(
                               padding: EdgeInsets.only(right: 16),
@@ -224,7 +232,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           GestureDetector(
                             onTap: () {
                               _alert(anotacao.id!);
-                              //_removerAnotacao(anotacao.id!);
                             },
                             child: const Padding(
                               padding: EdgeInsets.only(right: 0),
@@ -249,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
         foregroundColor: Colors.white,
         child: const Icon(Icons.add),
         onPressed: () {
-          _exibirCadastro();
+          _displayRecord(); //exibir cadastro
         },
       ),
     );

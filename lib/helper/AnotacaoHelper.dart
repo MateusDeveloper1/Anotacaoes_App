@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 
 
 class AnotacaoHelper {
-  static const String nomeTabela = "anotacao";
+  static const String nameTable = "anotacao";
   static final AnotacaoHelper _anotacaoHelper = AnotacaoHelper._internal();
   Database? _db;
 
@@ -18,52 +18,57 @@ class AnotacaoHelper {
     if(_db != null) {
       return _db;
     } else {
-      _db = await _inicializarDB();
+      _db = await _initializeDB();
       return _db;
     }
   }
 
   _onCreate(Database db, int version) async {
 
-    String sql = "CREATE TABLE $nomeTabela (id INTEGER PRIMARY KEY AUTOINCREMENT, titulo VARCHAR, descricao TEXT, data DATETIME)";
+    String sql = "CREATE TABLE $nameTable (id INTEGER PRIMARY KEY AUTOINCREMENT, titulo VARCHAR, descricao TEXT, data DATETIME)";
     await db.execute(sql);
   }
 
-  _inicializarDB() async {
-    final caminhoBancoDados = await getDatabasesPath();
-    final localBancoDados = join(caminhoBancoDados, "banco_minhas_anotações.db");
+  //inicilaiza o Banco de Dados
+  _initializeDB() async {
+    final pathDataBase = await getDatabasesPath();
+    final dataBaseLocale = join(pathDataBase, "banco_minhas_anotações.db");
 
-    var db = await openDatabase(localBancoDados, version: 1, onCreate: _onCreate);
+    var db = await openDatabase(dataBaseLocale, version: 1, onCreate: _onCreate);
     return db;
   }
 
-  Future<int> salvarAnotacao(Anotacao anotacao) async {
-    var bancoDados = await db;
-    int id = await bancoDados.insert(nomeTabela, anotacao.toMap());
+  //Salva anotação
+  Future<int> saveAnnotation(Anotacao anotation) async {
+    var dataBase = await db;
+    int id = await dataBase.insert(nameTable, anotation.toMap());
     return id;
   }
 
-  recuperarAnotacoes() async {
-    var bancoDados = await db;
-    String sql = "SELECT * FROM $nomeTabela ORDER BY data DESC";
-    List anotacoes = await bancoDados.rawQuery(sql);
-    return anotacoes;
+  //Recupera anotação
+  retrieveNotes() async {
+    var dataBase = await db;
+    String sql = "SELECT * FROM $nameTable ORDER BY data DESC";
+    List anotation = await dataBase.rawQuery(sql);
+    return anotation;
   }
 
-  Future<int> atualizarAnotacao (Anotacao anotacao) async {
-    var bancoDados = await db;
-    return await bancoDados.update(
-      nomeTabela,
-      anotacao.toMap(),
+  // Atualiza anotação
+  Future<int> updateAnnotation (Anotacao anotation) async {
+    var dataBase = await db;
+    return await dataBase.update(
+      nameTable,
+      anotation.toMap(),
       where: "id = ?",
-      whereArgs: [anotacao.id]
+      whereArgs: [anotation.id]
     );
   }
 
-  Future<int> removerAnotacao(int id) async {
-    var bancoDados = await db;
-    return await bancoDados.delete(
-      nomeTabela,
+  //Remover anotação
+  Future<int> removeAnnotation(int id) async {
+    var dataBase = await db;
+    return await dataBase.delete(
+      nameTable,
       where: "id = ?",
       whereArgs: [id]
     ); 
