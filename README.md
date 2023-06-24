@@ -12,6 +12,7 @@ Este é o repositório do aplicativo de Anotações_App. O aplicativo permite qu
   <img src = "https://user-images.githubusercontent.com/105679323/248398761-a388d02a-022f-4006-9f3f-2a7df1a119e8.png", width="200px"/>
   <img src = "https://user-images.githubusercontent.com/105679323/248398973-e3787409-1653-4dcd-8a81-e83412f31c3d.png", width="200px"/>
   <img src = "https://user-images.githubusercontent.com/105679323/248399192-39db079f-29e8-43a4-b498-8f6905f8f6e8.png", width="200px"/>
+  <img src = "https://user-images.githubusercontent.com/105679323/248432492-2525b2c5-5ee5-424c-aa3d-495501c2c0c6.png", width="200px"/>
 </div>
 
 
